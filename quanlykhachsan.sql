@@ -197,7 +197,7 @@ CREATE TABLE `nhanvien` (
 
 LOCK TABLES `nhanvien` WRITE;
 /*!40000 ALTER TABLE `nhanvien` DISABLE KEYS */;
-INSERT INTO `nhanvien` VALUES (1,'admin','$2a$08$lWyzDHafDtsw59REiZLXje6hItBqvhtLAgGTaF11b9G1Zqwt69Yue','Nguyen Van Aád','1989-12-22','Ha Noi','0123456789','nguyenvana@gmail.com',1),(2,'tieptan','123456','Nguyen Thi B','1995-02-02','Hai Phong','0123456789','nguyenthid@gmail.com',2),(3,'tieptan2','$2a$08$3wNUMMhR.xF6D9GJj/pB8u61n53aF35Bb2BundBPmb8Wu9ccOVYuu','Le Van C','1998-03-01','Sai Gon','0123456789','levanc@gmail.com',2),(48,'thongbui','$2a$08$ykiY2uBZay1Q0JwOG5gMB.KESv.whOCbxrrmJwCicltMwXVatmuoi','Bùi Thông','2023-04-30','Biên Hòa','1234567','thong@gmail.com',2),(49,'admin12345','$2a$08$2H3GPlfL7RkulM5oNUup6OllPzuMg0xN404c6FWE.esSdZBH6t/xG','Thông Bùi Hũu','2023-05-24','BIÊN hÒA','0123456897','thongngngng@gmail.com',1);
+INSERT INTO `nhanvien` VALUES (1,'admin','$2a$08$lWyzDHafDtsw59REiZLXje6hItBqvhtLAgGTaF11b9G1Zqwt69Yue','Nguyen Van Aád','1989-12-22','Ha Noi','0123456789','nguyenvana@gmail.com',1),(2,'tieptan','123456','Nguyen Thi B','1995-02-02','Hai Phong','0123456789','nguyenthid@gmail.com',2),(3,'tieptan2','$2a$08$3wNUMMhR.xF6D9GJj/pB8u61n53aF35Bb2BundBPmb8Wu9ccOVYuu','Le Van C','1998-03-01','Sai Gon','0123456789','levanc@gmail.com',2),(48,'manhle','$2a$08$ykiY2uBZay1Q0JwOG5gMB.KESv.whOCbxrrmJwCicltMwXVatmuoi','Lê Mạnh','2023-04-30','Biên Hòa','1234567','manh@gmail.com',2),(49,'admin12345','$2a$08$2H3GPlfL7RkulM5oNUup6OllPzuMg0xN404c6FWE.esSdZBH6t/xG','Lê Văn Mạnh','2023-05-24','BIÊN hÒA','0123456897','manhle@gmail.com',1);
 /*!40000 ALTER TABLE `nhanvien` ENABLE KEYS */;
 UNLOCK TABLES;
 

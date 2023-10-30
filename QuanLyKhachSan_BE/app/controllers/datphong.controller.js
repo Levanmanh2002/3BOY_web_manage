@@ -7,6 +7,7 @@ const NhanVien = db.nhanvien;
 const TrangThaiDat = db.trangthaidat;
 const PhuThuDatPhong = db.phuthudatphong;
 const { getPagination, getPagingData } = require("../middlewares/pagination");
+const schedule = require('node-schedule');
 
 var today = new Date();
 const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -162,18 +163,18 @@ exports.createDatPhong = (req, res) => {
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-          user: 'levanmanh24062002@gmail.com',
-          pass: 'lqvpypoaauafjbhs',
+          user: process.env.AUTH_EMAIL,
+          pass: process.env.AUTH_PASS,
         },
       });
-      
+
       const mailOptions = {
-        from: 'levanmanh24062002@gmail.com',
+        from: process.env.AUTH_EMAIL,
         to: Email,
         subject: 'Đơn đặt phòng thành công!',
         text: 'Cảm ơn bạn đã đặt phòng của chúng tôi. \n\n Khách Sạn 3 BOY',
       };
-      
+
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.log(error);
@@ -183,6 +184,7 @@ exports.createDatPhong = (req, res) => {
       });
       req.session.MaPhong = datphong.MaPhong;
       req.session.TinhTrangPhong = 2;
+      job.invoke();
       res.status(201).send(datphong);
     })
     .catch((err) => {
@@ -267,27 +269,54 @@ exports.cancelDatPhong = (req, res) => {
     });
 };
 
+const job = schedule.scheduleJob('0 * * * *', () => {
+  TinhTrangPhong.findAll().then((rooms) => {
+    rooms.forEach((room) => {
+      sendNotification(room);
+    });
+  });
+});
 
-// Xóa đơn
-// exports.deleteDatPhong = (req, res) => {
-//   const id = req.query.id;
-//   DatPhong.destroy({
-//     where: { MaDatPhong: id },
-//   })
-//     .then((num) => {
-//       if (num == 1) {
-//         res.send({
-//           message: "Xóa đơn thành công.",
-//         });
-//       } else {
-//         res.send({
-//           message: `Không thể xóa đơn. \nĐơn có thể không được tìm thấy!`,
-//         });
-//       }
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: `Lỗi khi xóa đơn`,
-//       });
-//     });
-// };
+
+function sendNotification() {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.AUTH_EMAIL,
+      pass: process.env.AUTH_PASS,
+    },
+  });
+
+  const timeRemaining = () => {
+    const currentTime = new Date().getTime();
+    const expirationTime = Phong.Date.getTime()
+    const timeDiff = expirationTime - currentTime;
+
+    if (timeDiff <= 0) {
+      return 'Đã hết hạn';
+    }
+
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    return `${days} ngày, ${hours} giờ, ${minutes} phút, ${seconds} giây`;
+  }
+
+  const mailOptions = {
+    from: NhanVien.Email,
+    to: KhachHang.Gmail,
+    subject: 'Thông báo thời gian còn lại',
+    text: `Phòng ${Phong.TenPhong}: Thời gian trả phòng còn lại: ${timeRemaining()}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log('Gửi email thất bại:', error);
+    } else {
+      console.log('Email đã được gửi: ' + info.response);
+    }
+  });
+}
+

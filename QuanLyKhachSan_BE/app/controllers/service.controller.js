@@ -2,6 +2,10 @@ const db = require("../models");
 const PhuThuDatPhong = db.phuthudatphong;
 const TinhTrangPhong = db.tinhtrangphong;
 const TrangThaiDat = db.trangthaidat;
+const KhachHang = db.khachhang;
+const Phong = db.phong;
+const NhanVien = db.nhanvien;
+const schedule = require('node-schedule');
 
 var today = new Date();
 const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
@@ -77,12 +81,22 @@ exports.getDanhSachTinhTrangPhong = (req, res) => {
       if (!tinhtrangphong) {
         return res.status(404).send({ message: "Danh sách trống!" });
       }
+      job.invoke();
+
       res.send(tinhtrangphong);
     })
     .catch((err) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+const job = schedule.scheduleJob('0 * * * *', () => {
+  TinhTrangPhong.findAll().then((rooms) => {
+    rooms.forEach((room) => {
+      sendNotification(room);
+    });
+  });
+});
 
 // Lấy danh sách trạng thái đặt phòng
 exports.getDanhSachTrangThaiDat = (req, res) => {
@@ -97,3 +111,50 @@ exports.getDanhSachTrangThaiDat = (req, res) => {
       res.status(500).send({ message: err.message });
     });
 };
+
+
+
+function sendNotification(room) {
+  // Tạo một transporter cho Gmail
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: 'youremail@gmail.com', // Điền email của bạn ở đây
+      pass: 'yourpassword', // Điền mật khẩu ứng dụng hoặc mật khẩu của bạn ở đây
+    },
+  });
+
+  // Hàm tính thời gian còn lại
+  const timeRemaining = () => {
+    const currentTime = new Date().getTime();
+    const expirationTime = Phong.Date.getTime()
+    const timeDiff = expirationTime - currentTime;
+
+    if (timeDiff <= 0) {
+      return 'Đã hết hạn';
+    }
+
+    const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+    return `${days} ngày, ${hours} giờ, ${minutes} phút, ${seconds} giây`;
+  }
+
+  // Gửi email thông báo về thời gian còn lại
+  const mailOptions = {
+    from: NhanVien.Email,
+    to: KhachHang.Gmail,
+    subject: 'Thông báo thời gian còn lại',
+    text: `Phòng ${Phong.TenPhong}: Thời gian trả phòng còn lại: ${timeRemaining()}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log('Gửi email thất bại:', error);
+    } else {
+      console.log('Email đã được gửi: ' + info.response);
+    }
+  });
+}
