@@ -117,10 +117,10 @@ exports.getDanhSachTrangThaiDat = (req, res) => {
 function sendNotification(room) {
   // Tạo một transporter cho Gmail
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: 'gmail',
     auth: {
-      user: 'youremail@gmail.com', // Điền email của bạn ở đây
-      pass: 'yourpassword', // Điền mật khẩu ứng dụng hoặc mật khẩu của bạn ở đây
+      user: process.env.AUTH_EMAIL,
+      pass: process.env.AUTH_PASS,
     },
   });
 
