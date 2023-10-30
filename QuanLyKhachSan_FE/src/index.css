@@ -1,0 +1,72 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (min-width: 640px) {
+  .max-w-lg {
+    max-width: 640px;
+  }
+}
+@media (min-width: 768px) {
+  .max-w-lg {
+    max-width: 768px;
+  }
+}
+@media (min-width: 1024px) {
+  .max-w-lg {
+    max-width: 1024px;
+  }
+}
+@media (min-width: 1280px) {
+  .max-w-lg {
+    max-width: 1280px;
+  }
+}
+
+.ant-spin .ant-spin-dot-item {
+  background-color: #1da57a;
+}
+
+.large-btn{
+  width: 100%;
+  background-color: #1da57a;
+}
+
+.ant-btn{
+  color: #fff;
+  background: #1da57a;
+}
+
+.edit-btn{
+  background: #3db389;
+}
+
+.remove-btn{
+  background: #FF3333;
+}
+
+.button-green:hover{
+  color: #fff;
+  border-color: #3db389;
+  background: #3db389;
+}
+span  {
+  font-size: 14px;
+}
+
+a {
+  color: #1da57a;
+  font-size: 14px;
+}
